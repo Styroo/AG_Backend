@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql" // or "mysql" or any other supported database
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Report {
+  id                       String @id @default(uuid())
+  clerkId                  String @default("user_2f67U5Q4wrZKQ4hKhXXurI5lqZl")
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  reportType               String @default("positive-intervention")
+  status                   String @default("closed")
+  ship                     String
+  observations             String
+  cause                    String
+  actionTaken              String
+  position                 String
+  location                 String
+  procedure                String @default("not-observed")
+  actionsAndPositions      String @default("not-observed")
+  permits                  String @default("not-observed")
+  isolationAndBarriers     String @default("not-observed")
+  personalProtectiveEquipment String @default("not-observed")
+  toolsAndEquipment        String @default("not-observed")
+  housekeeping             String @default("not-observed")
+  others                   String @default("not-observed")
+}
