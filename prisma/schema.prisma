@@ -35,3 +35,10 @@ model Report {
   housekeeping             String @default("not-observed")
   others                   String @default("not-observed")
 }
+
+model UserDevice {
+  id              String   @id @default(uuid())
+  userId          String
+  expoPushToken   String   @unique
+  createdAt       DateTime @default(now())
+}
