@@ -10,7 +10,6 @@ import fetch from "node-fetch";
 
 config();
 const app = express();
-const prisma = new PrismaClient();
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -132,6 +131,7 @@ const resolvers = {
 const server = new ApolloServer({ typeDefs, resolvers });
 
 async function startServer() {
+  const prisma = new PrismaClient();
   await server.start();
   app.use("/graphql", expressMiddleware(server));
 
