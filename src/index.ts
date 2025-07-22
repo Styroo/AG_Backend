@@ -24,7 +24,7 @@ const typeDefs = gql`
     updatedAt: String!
     reportType: String!
     status: String!
-    ship: String!
+    shipId: String!
     observations: String!
     cause: String!
     actionTaken: String!
@@ -55,7 +55,7 @@ const typeDefs = gql`
     clerkId: String!
     reportType: String!
     status: String!
-    ship: String!
+    shipId: String!
     observations: String!
     cause: String!
     actionTaken: String!
@@ -82,7 +82,11 @@ const resolvers = {
   Mutation: {
     createReport: async (_: any, args: { data: any }) =>
       await prisma.report.create({
-        data: { ...args.data, clerkId: "user_2f67U5Q4wrZKQ4hKhXXurI5lqZl" },
+        data: {
+          ...args.data,
+          clerkId: "user_2f67U5Q4wrZKQ4hKhXXurI5lqZl",
+          shipId: args.data.shipId, // <== musi być jawnie, bo Prisma tego potrzebuje do relacj
+        },
       }),
 
     sendPushNotification: async (
@@ -216,3 +220,37 @@ async function startServer() {
 }
 
 startServer();
+
+app.get("/api/ships", async (_req, res) => {
+  try {
+    const ships = await prisma.ship.findMany({
+      orderBy: { name: "asc" },
+    });
+    console.log("Ships from backend:", ships);
+
+    res.status(200).json(ships);
+  } catch (error) {
+    console.error("❌ Failed to fetch ships:", error);
+    res.status(500).json({ error: "Could not fetch ships" });
+  }
+});
+
+// ✅ POST new ship
+app.post("/api/ships", async (req, res) => {
+  const { name, imo } = req.body;
+
+  if (!name || typeof name !== "string") {
+    return res.status(400).json({ error: "Ship name is required" });
+  }
+
+  try {
+    const ship = await prisma.ship.create({
+      data: { name, imo },
+    });
+
+    res.status(201).json(ship);
+  } catch (error) {
+    console.error("❌ Failed to create ship:", error);
+    res.status(500).json({ error: "Could not create ship" });
+  }
+});

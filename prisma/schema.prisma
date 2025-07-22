@@ -1,46 +1,65 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-datasource db {
-  provider = "postgresql" // or "mysql" or any other supported database
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model Report {
-  id                       String @id @default(uuid())
-  clerkId                  String @default("user_2f67U5Q4wrZKQ4hKhXXurI5lqZl")
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
-  reportType               String @default("positive-intervention")
-  status                   String @default("closed")
-  ship                     String
-  observations             String
-  cause                    String
-  actionTaken              String
-  position                 String
-  location                 String
-  procedure                String @default("not-observed")
-  actionsAndPositions      String @default("not-observed")
-  permits                  String @default("not-observed")
-  isolationAndBarriers     String @default("not-observed")
-  personalProtectiveEquipment String @default("not-observed")
-  toolsAndEquipment        String @default("not-observed")
-  housekeeping             String @default("not-observed")
-  others                   String @default("not-observed")
+  id                          String   @id @default(uuid())
+  clerkId                     String
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+  observations                String
+  cause                       String
+  actionTaken                 String
+  position                    String
+  location                    String
+  procedure                   String   @default("not-observed")
+  actionsAndPositions         String   @default("not-observed")
+  permits                     String   @default("not-observed")
+  isolationAndBarriers        String   @default("not-observed")
+  personalProtectiveEquipment String   @default("not-observed")
+  toolsAndEquipment           String   @default("not-observed")
+  housekeeping                String   @default("not-observed")
+  others                      String   @default("not-observed")
+  reportType                  String   @default("positive-intervention")
+  status                      String   @default("closed")
+  shipId                      String
+  ship                        Ship     @relation(fields: [shipId], references: [id])
+}
+
+model Ship {
+  id      String   @id @default(cuid())
+  name    String
+  imo     String   @unique
+  fleetId String?
+  reports Report[]
+  fleet   Fleet?   @relation(fields: [fleetId], references: [id])
+}
+
+model FleetUser {
+  id      String @id @default(cuid())
+  userId  String
+  fleetId String
+  fleet   Fleet  @relation(fields: [fleetId], references: [id])
+}
+
+model Fleet {
+  id        String      @id @default(cuid())
+  name      String
+  createdAt DateTime    @default(now())
+  users     FleetUser[]
+  ships     Ship[]
 }
 
 model UserDevice {
-  id              String   @id @default(uuid())
-  userId          String
-  expoPushToken   String   @unique
-  createdAt       DateTime @default(now())
+  id            String   @id @default(uuid())
+  userId        String
+  expoPushToken String   @unique
+  createdAt     DateTime @default(now())
 }
 
 model Feedback {
@@ -50,4 +69,3 @@ model Feedback {
   comment   String
   createdAt DateTime @default(now())
 }
-
