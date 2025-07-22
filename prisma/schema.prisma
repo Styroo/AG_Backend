@@ -42,3 +42,12 @@ model UserDevice {
   expoPushToken   String   @unique
   createdAt       DateTime @default(now())
 }
+
+model Feedback {
+  id        String   @id @default(uuid())
+  name      String   @default("anon")
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+}
+

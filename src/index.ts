@@ -186,6 +186,28 @@ async function startServer() {
     }
   });
 
+  app.post("/api/feedback", async (req, res) => {
+    const { name, rating, comment } = req.body;
+
+    if (!name || !rating || !comment) {
+      return res
+        .status(400)
+        .json({ error: "All fields are required. (Except Name)" });
+    }
+
+    try {
+      const feedback = await prisma.feedback.create({
+        data: { name, rating: Number(rating), comment },
+      });
+
+      console.log("📝 New feedback saved:", feedback);
+      res.status(201).json({ ok: true });
+    } catch (err) {
+      console.error("❌ Failed to save feedback:", err);
+      res.status(500).json({ error: "Failed to save feedback" });
+    }
+  });
+
   // ✅ Start Express server
   const PORT = process.env.PORT || 4000;
   app.listen(PORT, () => {
