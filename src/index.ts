@@ -82,7 +82,7 @@ const resolvers = {
   Mutation: {
     createReport: async (_: any, args: { data: any }) =>
       await prisma.report.create({
-        data: { ...args.data, clerkId: "user_anon" },
+        data: { ...args.data, clerkId: "user_2f67U5Q4wrZKQ4hKhXXurI5lqZl" },
       }),
 
     sendPushNotification: async (
